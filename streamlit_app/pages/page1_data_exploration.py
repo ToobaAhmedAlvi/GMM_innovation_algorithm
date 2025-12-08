@@ -62,7 +62,7 @@ def load_data_final():
     if df.empty:
         st.error(f"Could not load data. Please ensure 'bank-additional-full' file is accessible.")
         return pd.DataFrame()
-
+    df.columns = df.columns.str.lower()
     # Clean columns
     df.columns = df.columns.str.strip().str.lower().str.replace('.', '_', regex=False)
     
