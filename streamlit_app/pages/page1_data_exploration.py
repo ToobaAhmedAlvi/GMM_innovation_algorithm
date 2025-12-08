@@ -39,12 +39,12 @@ TARGET_COL_BINARY = 'y_binary'
 def load_data_final():
     """Loads data from the .xlsx or .csv file and performs necessary cleaning."""
     paths_to_try = [
-        "bank-additional/bank-additional-full.xlsx",
-        "bank-additional/bank-additional-full.csv",
-        "../bank-additional/bank-additional-full.xlsx",
-        "../bank-additional/bank-additional-full.csv",
-        "bank-additional\\bank-additional-full.xlsx",
-        "bank-additional\\bank-additional-full.csv"
+        "bank-additional//bank-additional-full.xlsx",
+        "bank-additional//bank-additional-full.csv",
+        "../bank-additional//bank-additional-full.xlsx",
+        "../bank-additional//bank-additional-full.csv",
+        "bank-additional//bank-additional-full.xlsx",
+        "bank-additional//bank-additional-full.csv"
     ]
     df = pd.DataFrame()
 
@@ -54,7 +54,7 @@ def load_data_final():
                 if file_path.endswith('.xlsx'):
                     df = pd.read_excel(file_path)
                 else:
-                    df = pd.read_csv(file_path, sep=';')
+                    df = pd.read_csv(file_path, sep=',')
                 break
             except Exception:
                 continue

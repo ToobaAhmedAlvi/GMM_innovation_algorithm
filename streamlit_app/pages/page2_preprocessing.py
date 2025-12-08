@@ -21,7 +21,7 @@ apply_custom_css()
 # Load data
 @st.cache_data
 def load_data():
-    df = pd.read_csv("bank-additional\\bank-additional-full.csv", sep=",")
+    df = pd.read_csv("bank-additional//bank-additional-full.csv", sep=",")
     df.columns = df.columns.str.strip()
     df['y_binary'] = df['y'].map({'yes': 1, 'no': 0})
     return df
