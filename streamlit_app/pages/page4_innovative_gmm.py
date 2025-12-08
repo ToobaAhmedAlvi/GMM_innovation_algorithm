@@ -39,7 +39,7 @@ n_clusters = baseline['n_clusters']
 # Load original data for filters
 @st.cache_data
 def load_original_data():
-    df = pd.read_csv("bank-additional/bank-additional-full.csv", sep=",")
+    df = pd.read_csv("bank-additional//bank-additional-full.csv", sep=",")
     df.columns = df.columns.str.strip()
     df['y_binary'] = df['y'].map({'yes': 1, 'no': 0})
     return df

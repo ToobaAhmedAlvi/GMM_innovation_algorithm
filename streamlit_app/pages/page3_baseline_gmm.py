@@ -33,7 +33,7 @@ recommended_k = st.session_state.get('recommended_k', 3)
 # Load original for filters
 @st.cache_data
 def load_data():
-    df = pd.read_csv("bank-additional\\bank-additional-full.csv", sep=",")
+    df = pd.read_csv("bank-additional//bank-additional-full.csv", sep=",")
     df.columns = df.columns.str.strip()
     df['y_binary'] = df['y'].map({'yes': 1, 'no': 0})
     return df
