@@ -282,6 +282,150 @@ if st.session_state.get('innovative_trained'):
                      title="Top 15 Weighted Features", color="Weight")
         st.plotly_chart(fig, use_container_width=True)
 
+    # ----------------------------
+    # Business Insights: Cluster Profiling (copied/adapted from Baseline GMM)
+    # ----------------------------
+    st.markdown("---")
+    st.markdown("### 💼 Business Insights: Cluster Profiling")
+
+    # Add labels to dataframe
+    df_results = df.copy()
+    df_results['cluster'] = labels
+
+    st.markdown("#### Customer Segment Characteristics")
+
+    # ensure cluster index range covers 0..n_clusters-1
+    # use the n_clusters from results if available, otherwise fallback
+    try:
+        display_n_clusters = res.get('n_clusters', n_clusters)
+    except Exception:
+        display_n_clusters = n_clusters
+
+    cluster_counts = pd.Series(labels).value_counts().sort_index()
+
+    for cluster_id in range(display_n_clusters):
+        size = int(cluster_counts.get(cluster_id, 0))
+        with st.expander(f"🔍 Cluster {cluster_id} Profile ({size:,} customers)"):
+            cluster_data = df_results[df_results['cluster'] == cluster_id]
+
+            col1, col2, col3 = st.columns(3)
+
+            with col1:
+                st.markdown("**Demographics**")
+                # Use try/except in case columns are missing in df_processed
+                try:
+                    st.write(f"Avg Age: {cluster_data['age'].mean():.1f} years")
+                except Exception:
+                    st.write("Avg Age: N/A")
+                try:
+                    st.write(f"Avg Duration: {cluster_data['duration'].mean():.0f} sec")
+                except Exception:
+                    st.write("Avg Duration: N/A")
+                try:
+                    st.write(f"Avg Campaign: {cluster_data['campaign'].mean():.2f}")
+                except Exception:
+                    st.write("Avg Campaign: N/A")
+
+            with col2:
+                st.markdown("**Most Common**")
+                try:
+                    job_mode = cluster_data['job'].mode().values[0]
+                except Exception:
+                    job_mode = "N/A"
+                try:
+                    edu_mode = cluster_data['education'].mode().values[0]
+                except Exception:
+                    edu_mode = "N/A"
+                try:
+                    contact_mode = cluster_data['contact'].mode().values[0]
+                except Exception:
+                    contact_mode = "N/A"
+
+                st.write(f"Job: {job_mode}")
+                st.write(f"Education: {edu_mode}")
+                st.write(f"Contact: {contact_mode}")
+
+            with col3:
+                st.markdown("**Conversion**")
+                try:
+                    conv_rate = cluster_data['y_binary'].mean() * 100
+                    st.metric("Conversion Rate", f"{conv_rate:.2f}%")
+                    overall_conv = df['y_binary'].mean() * 100
+                    if conv_rate > overall_conv:
+                        st.success("🎯 High-value segment")
+                    elif conv_rate < overall_conv * 0.5:
+                        st.error("⚠️ Low-engagement segment")
+                    else:
+                        st.info("📊 Average segment")
+                except Exception:
+                    st.write("Conversion Rate: N/A")
+
+    # Conversion comparison
+    st.markdown("#### 📈 Conversion Rate by Cluster")
+
+    try:
+        conversion_by_cluster = df_results.groupby('cluster')['y_binary'].mean() * 100
+
+        fig = px.bar(
+            x=[f"Cluster {i}" for i in conversion_by_cluster.index],
+            y=conversion_by_cluster.values,
+            text=[f"{v:.2f}%" for v in conversion_by_cluster.values],
+            title="Conversion Rate by Cluster",
+            labels={'x': 'Cluster', 'y': 'Conversion Rate (%)'},
+            color=conversion_by_cluster.values,
+            color_continuous_scale='RdYlGn'
+        )
+        overall_avg = df['y_binary'].mean()*100
+        fig.add_hline(
+            y=overall_avg,
+            line_dash="dash",
+            line_color="red",
+            annotation_text=f"Overall Average ({overall_avg:.2f}%)"
+        )
+        fig.update_layout(height=400, showlegend=False)
+        st.plotly_chart(fig, use_container_width=True)
+    except Exception:
+        st.write("Conversion comparison not available (missing y_binary).")
+
+    st.markdown("---")
+
+    # Download Results
+    st.markdown("### 💾 Download Results")
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        try:
+            results_df = df_results[['age', 'job', 'education', 'duration',
+                                     'campaign', 'y', 'cluster']]
+        except Exception:
+            # Fallback: include whatever columns exist
+            results_df = df_results.copy()
+        csv = results_df.to_csv(index=False).encode('utf-8')
+        st.download_button(
+            label="📥 Download Cluster Assignments",
+            data=csv,
+            file_name="innovative_gmm_clusters.csv",
+            mime="text/csv",
+            use_container_width=True
+        )
+
+    with col2:
+        metrics_df = pd.DataFrame({
+            'Metric': ['Silhouette', 'Davies-Bouldin',
+                       'Calinski-Harabasz', 'Training Time (s)'],
+            'Value': [res['silhouette'], res['davies_bouldin'],
+                      res['calinski'], res['training_time']]
+        })
+        csv = metrics_df.to_csv(index=False).encode('utf-8')
+        st.download_button(
+            label="📥 Download Metrics",
+            data=csv,
+            file_name="innovative_gmm_metrics.csv",
+            mime="text/csv",
+            use_container_width=True
+        )
+
 st.markdown("---")
 st.markdown("**Next → Go to Page 5: Comparison & Final Report**")
 if st.button("Go to Comparison Page"):
