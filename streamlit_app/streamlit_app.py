@@ -51,6 +51,9 @@ st.markdown("""
     }
 </style>
 """, unsafe_allow_html=True)
+# Header
+st.markdown('<h1 class="main-title">🏦 Bank Marketing Customer Clustering</h1>', unsafe_allow_html=True)
+st.markdown('<p class="subtitle">Deep-Based Gaussian Mixture Model with Adaptive Variable Grouping</p>', unsafe_allow_html=True)
 
 # === TOP NAVIGATION (Consistent across all pages) ===
 st.markdown("## 🚀 Navigate to Project Steps")
@@ -58,7 +61,7 @@ st.markdown("## 🚀 Navigate to Project Steps")
 col1, col2, col3 = st.columns(3)
 with col1:
     st.markdown("<div class='current-page'>", unsafe_allow_html=True)
-    st.button("📊 Step 1: Data Exploration", disabled=True, use_container_width=True)
+    st.button("📊 Step 1: Data Exploration",  use_container_width=True)
     st.markdown("</div>", unsafe_allow_html=True)
     st.caption("Analyze dataset statistics, distributions, and correlations")
 
@@ -90,9 +93,6 @@ with col3:
 
 st.markdown("---")
 
-# Header
-st.markdown('<h1 class="main-title">🏦 Bank Marketing Customer Clustering</h1>', unsafe_allow_html=True)
-st.markdown('<p class="subtitle">Deep-Based Gaussian Mixture Model with Adaptive Variable Grouping</p>', unsafe_allow_html=True)
 
 # Business Context
 st.markdown('<div class="business-card">', unsafe_allow_html=True)
