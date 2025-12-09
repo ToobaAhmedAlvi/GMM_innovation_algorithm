@@ -60,9 +60,8 @@ st.markdown("## 🚀 Navigate to Project Steps")
 
 col1, col2, col3 = st.columns(3)
 with col1:
-    st.markdown("<div class='current-page'>", unsafe_allow_html=True)
-    st.button("📊 Step 1: Data Exploration",  use_container_width=True)
-    st.markdown("</div>", unsafe_allow_html=True)
+    if st.button("📊 Step 1: Data Exploration",  use_container_width=True,type="primary"):
+        st.switch_page("pages/page1_data_exploration.py")
     st.caption("Analyze dataset statistics, distributions, and correlations")
 
 with col2:
